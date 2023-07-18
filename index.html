@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Budget</title>
+    <style>
+      table {
+        border-collapse: collapse;
+      }
+      th, td {
+        border: 1px solid black;
+        padding: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Monthly Budget Calculator</h1>
+    <label for="income">Monthly Income:</label>
+    <input type="number" id="income" placeholder="Enter your monthly income">
+  
+    <h2>Expenses</h2>
+    <label for="expense-name">Expense Name:</label>
+    <input type="text" id="expense-name" placeholder="Enter the expense name">
+  
+    <label for="expense-amount">Expense Amount:</label>
+    <input type="number" id="expense-amount" placeholder="Enter the expense amount">
+  
+    <label for="expense-category">Expense Category:</label>
+    <select id="expense-category">
+      <option value="fixed-expenses">Fixed Expenses</option>
+      <option value="investments">Investments</option>
+      <option value="go-wild">Go Wild</option>
+      <option value="savings">Savings</option>
+    </select>
+  
+    <button onclick="addExpense()">Add Expense</button>
+  
+    <h2>Expense Breakdown</h2>
+    <table>
+      <tr>
+        <th>Category</th>
+        <th>Amount</th>
+      </tr>
+      <tr>
+        <td>Fixed Expenses</td>
+        <td id="fixed-expenses-amount"></td>
+      </tr>
+      <tr>
+        <td>Investments</td>
+        <td id="investments-amount"></td>
+      </tr>
+      <tr>
+        <td>Go Wild</td>
+        <td id="go-wild-amount"></td>
+      </tr>
+      <tr>
+        <td>Savings</td>
+        <td id="savings-amount"></td>
+      </tr>
+    </table>
+  
+    <h2>Expense Outcomes</h2>
+    <table id="expense-outcomes-table">
+      <tr>
+        <th>Expense Name</th>
+        <th>Expense Amount</th>
+        <th>Category</th>
+        <th>action</th>
+      </tr>
+    </table>
+    <button onclick="clearExpenseOutcomes()">Clear Expense Outcomes</button>
+  
+    <script>
+      function calculateExpenseBreakdown() {
+        let income = parseFloat(document.getElementById('income').value);
+        let fixedExpenses = income * 0.65;
+        let investments = income * 0.1;
+        let goWild = income * 0.1;
+        let savings = income * 0.15;
+  
+        document.getElementById('fixed-expenses-amount').textContent = fixedExpenses.toFixed(2);
+        document.getElementById('investments-amount').textContent = investments.toFixed(2);
+        document.getElementById('go-wild-amount').textContent = goWild.toFixed(2);
+        document.getElementById('savings-amount').textContent = savings.toFixed(2);
+      }
+  
+      function addExpense() {
+        let expenseName = document.getElementById('expense-name').value;
+        let expenseAmount = parseFloat(document.getElementById('expense-amount').value);
+        let expenseCategory = document.getElementById('expense-category').value;
+  
+        let categoryElement = document.getElementById(expenseCategory + '-amount');
+        let categoryAmount = parseFloat(categoryElement.textContent);
+        categoryElement.textContent = (categoryAmount - expenseAmount).toFixed(2);
+  
+        let table = document.getElementById('expense-outcomes-table');
+        let row = table.insertRow(-1);
+        let nameCell = row.insertCell(0);
+        let amountCell = row.insertCell(1);
+        let categoryCell = row.insertCell(2);
+        let actionCell = row.insertCell(3);
+  
+        nameCell.textContent = expenseName;
+        amountCell.textContent = expenseAmount.toFixed(2);
+        categoryCell.textContent = expenseCategory;
+        actionCell.innerHTML = '<button onclick="deleteExpense(this)">Delete</button>';
+  
+        document.getElementById('expense-name').value = '';
+        document.getElementById('expense-amount').value = '';
+      }
+
+      function deleteExpense(button) {
+      let row = button.parentNode.parentNode;
+      let expenseAmount = parseFloat(row.cells[1].textContent);
+      let expenseCategory = row.cells[2].textContent;
+
+      let categoryElement = document.getElementById(expenseCategory + '-amount');
+      let categoryAmount = parseFloat(categoryElement.textContent);
+      categoryElement.textContent = (categoryAmount + expenseAmount).toFixed(2);
+
+      let table = document.getElementById('expense-outcomes-table');
+      table.deleteRow(row.rowIndex);
+    }
+
+    function clearExpenseOutcomes() {
+      let table = document.getElementById('expense-outcomes-table');
+      let rowCount = table.rows.length;
+
+      for (let i = rowCount - 1; i > 0; i--) {
+        table.deleteRow(i);
+      }
+    }
+  
+      document.getElementById('income').addEventListener('input', calculateExpenseBreakdown);
+    </script>
+  </body>
+</html>
